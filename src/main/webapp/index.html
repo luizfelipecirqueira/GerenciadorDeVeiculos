@@ -11,74 +11,77 @@
             <h1>Gerenciador de Veículos</h1>
         </header>
 
-        <div class="table-container">
-            <h2>Lista de Veículos</h2>
-            <table id="veiculoTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Modelo</th>
-                        <th>Ano</th>
-                        <th>Preço</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Os dados dos veículos serão carregados aqui -->
-                </tbody>
-            </table>
-        </div>
+        <div class="main-container">
+            <div class="add-button-container">
+                <button onclick="mostrarFormulario()">Adicionar Veículo</button>
+            </div>
 
-        <div class="add-button-container">
-            <button onclick="mostrarFormulario()">Adicionar Veículo</button>
-        </div>
+            <div class="table-container">
+                <h2>Lista de Veículos</h2>
+                <table id="veiculoTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Modelo</th>
+                            <th>Ano</th>
+                            <th>Preço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Os dados dos veículos serão carregados aqui -->
+                    </tbody>
+                </table>
+            </div>
 
-        <div id="formulario" style="display:none;">
-            <h2>Adicionar ou Editar Veículo</h2>
-            <form id="formVeiculo" onsubmit="salvarVeiculo(event)">
-                <input type="hidden" id="veiculoId" name="veiculoId"> <!-- Campo oculto para o ID do veículo -->
-                <label for="modelo">Modelo:</label>
-                <input type="text" id="modelo" name="modelo" required><br><br>
+            <div id="formulario" class="form-container">
+                <h2>Adicionar ou Editar Veículo</h2>
+                <form id="formVeiculo" onsubmit="salvarVeiculo(event)">
+                    <input type="hidden" id="veiculoId" name="veiculoId">
+                    <label for="modelo">Modelo:</label>
+                    <input type="text" id="modelo" name="modelo" required>
 
-                <label for="fabricante">Fabricante:</label>
-                <input type="text" id="fabricante" name="fabricante" required><br><br>
+                    <label for="fabricante">Fabricante:</label>
+                    <input type="text" id="fabricante" name="fabricante" required>
 
-                <label for="ano">Ano:</label>
-                <input type="number" id="ano" name="ano" required><br><br>
+                    <label for="ano">Ano:</label>
+                    <input type="number" id="ano" name="ano" required>
 
-                <label for="preco">Preço:</label>
-                <input type="number" id="preco" name="preco" required><br><br>
+                    <label for="preco">Preço:</label>
+                    <input type="number" id="preco" name="preco" required>
 
-                <label for="tipoVeiculo">Tipo de Veículo:</label>
-                <select id="tipoVeiculo" name="tipoVeiculo" onchange="mostrarCamposAdicionais()" required>
-                    <option value="">Selecione...</option>
-                    <option value="carro">Carro</option>
-                    <option value="moto">Moto</option>
-                </select><br><br>
+                    <label for="tipoVeiculo">Tipo de Veículo:</label>
+                    <select id="tipoVeiculo" name="tipoVeiculo" onchange="mostrarCamposAdicionais()" required>
+                        <option value="">Selecione...</option>
+                        <option value="carro">Carro</option>
+                        <option value="moto">Moto</option>
+                    </select>
 
-                <div id="carroCampos" style="display:none;">
-                    <label for="quantidadePortas">Quantidade de Portas:</label>
-                    <input type="number" id="quantidadePortas" name="quantidadePortas"><br><br>
+                    <div id="carroCampos" style="display:none;">
+                        <label for="quantidadePortas">Quantidade de Portas:</label>
+                        <input type="number" id="quantidadePortas" name="quantidadePortas">
 
-                    <label for="tipoCombustivel">Tipo de Combustível:</label>
-                    <select id="tipoCombustivel" name="tipoCombustivel">
-                        <option value="gasolina">Gasolina</option>
-                        <option value="etanol">Etanol</option>
-                        <option value="diesel">Diesel</option>
-                        <option value="flex">Flex</option>
-                    </select><br><br>
-                </div>
+                        <label for="tipoCombustivel">Tipo de Combustível:</label>
+                        <select id="tipoCombustivel" name="tipoCombustivel">
+                            <option value="gasolina">Gasolina</option>
+                            <option value="etanol">Etanol</option>
+                            <option value="diesel">Diesel</option>
+                            <option value="flex">Flex</option>
+                        </select>
+                    </div>
 
-                <div id="motoCampos" style="display:none;">
-                    <label for="cilindrada">Cilindrada:</label>
-                    <input type="number" id="cilindrada" name="cilindrada"><br><br>
-                </div>
+                    <div id="motoCampos" style="display:none;">
+                        <label for="cilindrada">Cilindrada:</label>
+                        <input type="number" id="cilindrada" name="cilindrada">
+                    </div>
 
-                <button type="submit">Salvar</button>
-                <button type="button" onclick="cancelarFormulario()">Cancelar</button>
-            </form>
+                    <button type="submit">Salvar</button>
+                    <button type="button" onclick="cancelarFormulario()">Cancelar</button>
+                </form>
+            </div>
         </div>
 
         <script src="script.js"></script>
     </body>
 </html>
+

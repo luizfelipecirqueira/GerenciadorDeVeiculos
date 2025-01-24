@@ -12,6 +12,11 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 header {
@@ -19,15 +24,24 @@ header {
     color: white;
     padding: 1em;
     text-align: center;
+    width: 100%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
     margin: 0;
 }
 
-.table-container {
+.main-container {
     width: 90%;
+    max-width: 800px;
     margin: 20px auto;
+    text-align: center;
+}
+
+.table-container {
+    margin-top: 20px;
+    overflow-x: auto;
 }
 
 table {
@@ -52,19 +66,53 @@ tr:nth-child(even) {
 }
 
 button {
-    padding: 5px 10px;
-    margin: 5px;
+    padding: 10px 15px;
+    margin: 10px;
     background-color: #4CAF50;
     color: white;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #45a049;
 }
 
-#formulario {
-    display: none; /* Formulário ficará escondido no inicio.  */
+.add-button-container {
+    margin-bottom: 20px;
 }
+
+.form-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.form-container label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-container input, .form-container select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-container button {
+    width: 100%;
+}
+
 
