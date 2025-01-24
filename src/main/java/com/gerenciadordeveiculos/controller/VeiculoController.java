@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Usuário
  */
-@WebServlet("/api/veiculos/*")  // Alterando o mapeamento para capturar o ID na URL, quando precisar pegar
+@WebServlet("/api/veiculos/*")
 public class VeiculoController extends HttpServlet {
 
     private VeiculoService veiculoService;
@@ -36,51 +36,82 @@ public class VeiculoController extends HttpServlet {
         }
     }
 
+    /**
+     * Método para listar todos os veículos.
+     */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*");  // Permite qualquer origem
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
 
+    // Verificar se há um id na URL
+    String idParam = request.getPathInfo();
+    if (idParam != null && idParam.startsWith("/")) {
+        idParam = idParam.substring(1);
+    }
+
+    if (idParam != null && !idParam.isEmpty()) {
         try {
-            List<Veiculo> veiculos = veiculoService.getAllVeiculos(); // Pega os veículos do serviço
-            String json = new Gson().toJson(veiculos); // Converte a lista de veículos para JSON
-            response.getWriter().write(json); // Envia o JSON como resposta
+            int id = Integer.parseInt(idParam);
+            Veiculo veiculo = veiculoService.getVeiculoById(id);
+            if (veiculo != null) {
+                String json = new Gson().toJson(veiculo);
+                response.getWriter().write(json);
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("{\"message\": \"Veículo não encontrado\"}");
+            }
+        } catch (NumberFormatException | SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"message\": \"Erro ao buscar o veículo\"}");
+        }
+    } else {
+        // Caso contrário, retornar todos os veículos
+        try {
+            List<Veiculo> veiculos = veiculoService.getAllVeiculos();
+            String json = new Gson().toJson(veiculos);
+            response.getWriter().write(json);
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Erro ao buscar veículos\"}");
         }
     }
+}
 
+    /**
+     * Método para excluir um veículo específico.
+     */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        // Pegando o ID da URL
-        String idParam = request.getPathInfo();  // Exemplo: /api/veiculos/id-veiculo
+        String idParam = request.getPathInfo();
         if (idParam != null && idParam.startsWith("/")) {
-            idParam = idParam.substring(1);  // Remove a barra inicial para pegar o ID
+            idParam = idParam.substring(1);
         }
 
         try {
             int id = Integer.parseInt(idParam);
             veiculoService.deleteVeiculo(id);
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);  // Status 204 - sucesso, porém sem conteúdo.
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         } catch (NumberFormatException | SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Erro ao excluir o veículo\"}");
         }
     }
 
+    /**
+     * Método para cadastrar um novo veículo.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        // Lê o JSON enviado no corpo da requisição
         StringBuilder sb = new StringBuilder();
         String line;
         while ((line = request.getReader().readLine()) != null) {
@@ -88,18 +119,49 @@ public class VeiculoController extends HttpServlet {
         }
 
         try {
-            // Converte o JSON para um objeto Veiculo
             Gson gson = new Gson();
             Veiculo veiculo = gson.fromJson(sb.toString(), Veiculo.class);
-
-            // Salva o veículo no banco de dados
             veiculoService.saveVeiculo(veiculo);
-
             response.setStatus(HttpServletResponse.SC_CREATED);
             response.getWriter().write("{\"message\": \"Veículo cadastrado com sucesso!\"}");
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Erro ao cadastrar o veículo\"}");
+        }
+    }
+
+    /**
+     * Método para atualizar um veículo existente.
+     */
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        String idParam = request.getPathInfo();
+        if (idParam != null && idParam.startsWith("/")) {
+            idParam = idParam.substring(1);
+        }
+
+        try {
+            int id = Integer.parseInt(idParam);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = request.getReader().readLine()) != null) {
+                sb.append(line);
+            }
+
+            Gson gson = new Gson();
+            Veiculo veiculo = gson.fromJson(sb.toString(), Veiculo.class);
+            veiculo.setId(id);
+            veiculoService.updateVeiculo(veiculo);
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write("{\"message\": \"Veículo atualizado com sucesso!\"}");
+        } catch (NumberFormatException | SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"message\": \"Erro ao atualizar o veículo\"}");
         }
     }
 }

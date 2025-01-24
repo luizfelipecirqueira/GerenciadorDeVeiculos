@@ -24,8 +24,10 @@ public class VeiculoDAO {
         this.connection = connection;
     }
 
+    // Método para salvar um veículo (geral)
     public void save(Veiculo veiculo) throws SQLException {
         String sql = "INSERT INTO Veiculo (modelo, fabricante, ano, preco) VALUES (?, ?, ?, ?)";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, veiculo.getModelo());
             stmt.setString(2, veiculo.getFabricante());
@@ -35,16 +37,19 @@ public class VeiculoDAO {
 
             ResultSet generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
-                veiculo.setId(generatedKeys.getInt(1));
+                int id = generatedKeys.getInt(1);
+                veiculo.setId(id);
             }
         }
     }
-
+    
     public List<Veiculo> findAll() throws SQLException {
         List<Veiculo> veiculos = new ArrayList<>();
         String sql = "SELECT * FROM Veiculo";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
+
             while (rs.next()) {
                 Veiculo veiculo = new Veiculo(
                         rs.getInt("id"),
@@ -59,8 +64,29 @@ public class VeiculoDAO {
         return veiculos;
     }
 
+    public Veiculo findById(int id) throws SQLException {
+        String sql = "SELECT * FROM Veiculo WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Veiculo veiculo = new Veiculo(
+                        rs.getInt("id"),
+                        rs.getString("modelo"),
+                        rs.getString("fabricante"),
+                        rs.getInt("ano"),
+                        rs.getBigDecimal("preco")
+                );
+                return veiculo;
+            }
+        }
+        return null;
+    }
+
     public void delete(int id) throws SQLException {
         String sql = "DELETE FROM Veiculo WHERE id = ?";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -69,6 +95,7 @@ public class VeiculoDAO {
 
     public void update(Veiculo veiculo) throws SQLException {
         String sql = "UPDATE Veiculo SET modelo = ?, fabricante = ?, ano = ?, preco = ? WHERE id = ?";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, veiculo.getModelo());
             stmt.setString(2, veiculo.getFabricante());

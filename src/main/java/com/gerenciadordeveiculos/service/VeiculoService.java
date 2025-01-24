@@ -29,6 +29,10 @@ public class VeiculoService {
     public List<Veiculo> getAllVeiculos() throws SQLException {
         return veiculoDAO.findAll();
     }
+    
+    public Veiculo getVeiculoById(int id) throws SQLException {
+    return veiculoDAO.findById(id);
+}
 
     public void deleteVeiculo(int id) throws SQLException {
         veiculoDAO.delete(id);
@@ -38,4 +42,5 @@ public class VeiculoService {
         veiculoDAO.update(veiculo);
     }
 }
+
 

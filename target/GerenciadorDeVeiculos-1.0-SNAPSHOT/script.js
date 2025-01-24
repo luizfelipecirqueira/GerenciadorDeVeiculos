@@ -31,11 +31,42 @@ function loadVeiculos() {
         });
 }
 
-
 function editarVeiculo(id) {
-    console.log('Editar veículo:', id);
-    
-    window.location.href = `/editarVeiculo?id=${id}`;
+    fetch(`/GerenciadorDeVeiculos/api/veiculos/${id}`)
+        .then(response => response.json())
+        .then(veiculo => {
+            if (!veiculo) {
+                alert('Veículo não encontrado.');
+                return;
+            }
+
+            document.getElementById('formVeiculo').reset();
+            document.getElementById('carroCampos').style.display = 'none';
+            document.getElementById('motoCampos').style.display = 'none';
+
+            document.getElementById('veiculoId').value = veiculo.id || '';
+            document.getElementById('modelo').value = veiculo.modelo || '';
+            document.getElementById('fabricante').value = veiculo.fabricante || '';
+            document.getElementById('ano').value = veiculo.ano || '';
+            document.getElementById('preco').value = veiculo.preco || '';
+            document.getElementById('tipoVeiculo').value = veiculo.tipoVeiculo || '';
+
+            if (veiculo.tipoVeiculo === 'carro') {
+                document.getElementById('carroCampos').style.display = 'block';
+                document.getElementById('quantidadePortas').value = veiculo.quantidadePortas || '';
+                document.getElementById('tipoCombustivel').value = veiculo.tipoCombustivel || '';
+            } else if (veiculo.tipoVeiculo === 'moto') {
+                document.getElementById('motoCampos').style.display = 'block';
+                document.getElementById('cilindrada').value = veiculo.cilindrada || '';
+            }
+
+            // Exibe o formulário de edição
+            document.getElementById('formulario').style.display = 'block'; 
+        })
+        .catch(error => {
+            console.error('Erro ao carregar dados do veículo:', error);
+            alert('Erro ao carregar os dados do veículo.');
+        });
 }
 
 function detalharVeiculo(id) {
@@ -67,10 +98,10 @@ function excluirVeiculo(id) {
     }
 }
 
-
 function salvarVeiculo(event) {
     event.preventDefault();
 
+    const veiculoId = document.getElementById('veiculoId').value; // Obtém o ID do veículo
     const modelo = document.getElementById('modelo').value;
     const fabricante = document.getElementById('fabricante').value;
     const ano = document.getElementById('ano').value;
@@ -82,7 +113,6 @@ function salvarVeiculo(event) {
         return;
     }
 
-  
     let veiculo = {
         modelo: modelo,
         fabricante: fabricante,
@@ -100,9 +130,7 @@ function salvarVeiculo(event) {
         veiculo.tipoVeiculo = 'carro';
         veiculo.quantidadePortas = quantidadePortas;
         veiculo.tipoCombustivel = tipoCombustivel;
-    }
-    
-    else if (tipoVeiculo === 'moto') {
+    } else if (tipoVeiculo === 'moto') {
         const cilindrada = document.getElementById('cilindrada').value;
         if (!cilindrada) {
             alert('Por favor, preencha todos os campos obrigatórios para moto!');
@@ -112,8 +140,15 @@ function salvarVeiculo(event) {
         veiculo.cilindrada = cilindrada;
     }
 
-    fetch('/GerenciadorDeVeiculos/api/veiculos', {
-        method: 'POST',
+    let method = 'POST';
+    let url = '/GerenciadorDeVeiculos/api/veiculos';
+    if (veiculoId) {
+        method = 'PUT';  // Se tiver ID, será um update
+        url = `/GerenciadorDeVeiculos/api/veiculos/${veiculoId}`;
+    }
+
+    fetch(url, {
+        method: method,
         headers: {
             'Content-Type': 'application/json',
         },
@@ -121,11 +156,11 @@ function salvarVeiculo(event) {
     })
     .then(response => {
         if (response.ok) {
-            alert('Veículo cadastrado com sucesso!');
+            alert('Veículo salvo com sucesso!');
             loadVeiculos(); 
             cancelarFormulario();
         } else {
-            alert('Erro ao cadastrar o veículo. Tente novamente.');
+            alert('Erro ao salvar o veículo. Tente novamente.');
         }
     })
     .catch(error => {
@@ -142,7 +177,6 @@ function mostrarFormulario() {
     document.getElementById('formulario').style.display = 'block';
 }
 
-
 function mostrarCamposAdicionais() {
     const tipoVeiculo = document.getElementById('tipoVeiculo').value;
     const carroCampos = document.getElementById('carroCampos');
@@ -151,11 +185,9 @@ function mostrarCamposAdicionais() {
     const tipoCombustivel = document.getElementById('tipoCombustivel');
     const cilindrada = document.getElementById('cilindrada');
 
- 
     carroCampos.style.display = 'none';
     motoCampos.style.display = 'none';
 
-   
     quantidadePortas.removeAttribute('required');
     tipoCombustivel.removeAttribute('required');
     cilindrada.removeAttribute('required');

@@ -52,7 +52,6 @@ public class CarroDAO {
         }
     }
 
-    // Método para buscar um carro pelo ID
     public Carro findById(int id) throws SQLException {
         String sqlVeiculo = "SELECT * FROM Veiculo WHERE id = ?";
         String sqlCarro = "SELECT * FROM Carro WHERE id = ?";

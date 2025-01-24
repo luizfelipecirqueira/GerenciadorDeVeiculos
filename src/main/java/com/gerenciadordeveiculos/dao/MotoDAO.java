@@ -23,7 +23,6 @@ public class MotoDAO {
         this.connection = connection;
     }
 
-
     public void save(Moto moto) throws SQLException {
         String sqlVeiculo = "INSERT INTO Veiculo (modelo, fabricante, ano, preco) VALUES (?, ?, ?, ?)";
         String sqlMoto = "INSERT INTO Moto (id, cilindrada) VALUES (?, ?)";
@@ -31,19 +30,16 @@ public class MotoDAO {
         try (PreparedStatement stmtVeiculo = connection.prepareStatement(sqlVeiculo, Statement.RETURN_GENERATED_KEYS);
              PreparedStatement stmtMoto = connection.prepareStatement(sqlMoto)) {
 
-
             stmtVeiculo.setString(1, moto.getModelo());
             stmtVeiculo.setString(2, moto.getFabricante());
             stmtVeiculo.setInt(3, moto.getAno());
             stmtVeiculo.setBigDecimal(4, moto.getPreco());
             stmtVeiculo.executeUpdate();
 
-
             ResultSet generatedKeys = stmtVeiculo.getGeneratedKeys();
             if (generatedKeys.next()) {
                 int idVeiculo = generatedKeys.getInt(1);
                 moto.setId(idVeiculo);
-
 
                 stmtMoto.setInt(1, moto.getId());
                 stmtMoto.setInt(2, moto.getCilindrada());
@@ -85,7 +81,6 @@ public class MotoDAO {
         return null;
     }
 
-
     public void delete(int id) throws SQLException {
         String sqlMoto = "DELETE FROM Moto WHERE id = ?";
         String sqlVeiculo = "DELETE FROM Veiculo WHERE id = ?";
@@ -121,4 +116,3 @@ public class MotoDAO {
         }
     }
 }
-

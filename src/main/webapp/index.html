@@ -34,8 +34,9 @@
         </div>
 
         <div id="formulario" style="display:none;">
-            <h2>Adicionar Veículo</h2>
+            <h2>Adicionar ou Editar Veículo</h2>
             <form id="formVeiculo" onsubmit="salvarVeiculo(event)">
+                <input type="hidden" id="veiculoId" name="veiculoId"> <!-- Campo oculto para o ID do veículo -->
                 <label for="modelo">Modelo:</label>
                 <input type="text" id="modelo" name="modelo" required><br><br>
 
