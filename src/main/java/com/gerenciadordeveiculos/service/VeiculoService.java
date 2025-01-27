@@ -14,8 +14,8 @@ import java.util.List;
  *
  * @author Usuário
  */
-
 public class VeiculoService {
+
     private VeiculoDAO veiculoDAO;
 
     public VeiculoService(Connection connection) {
@@ -29,10 +29,10 @@ public class VeiculoService {
     public List<Veiculo> getAllVeiculos() throws SQLException {
         return veiculoDAO.findAll();
     }
-    
+
     public Veiculo getVeiculoById(int id) throws SQLException {
-    return veiculoDAO.findById(id);
-}
+        return veiculoDAO.findById(id);
+    }
 
     public void deleteVeiculo(int id) throws SQLException {
         veiculoDAO.delete(id);
@@ -42,5 +42,3 @@ public class VeiculoService {
         veiculoDAO.update(veiculo);
     }
 }
-
-

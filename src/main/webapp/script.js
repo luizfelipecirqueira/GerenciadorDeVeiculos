@@ -1,5 +1,41 @@
+function filtrarPorId() {
+    const id = document.getElementById('filtrarId').value;
+    if (id) {
+        fetch(`/GerenciadorDeVeiculos/api/veiculos/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar o veículo');
+                }
+                return response.json();
+            })
+            .then(veiculo => {
+                const tableBody = document.querySelector('#veiculoTable tbody');
+                tableBody.innerHTML = ''; // Limpa a tabela
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${veiculo.id}</td>
+                    <td>${veiculo.modelo}</td>
+                    <td>${veiculo.ano}</td>
+                    <td>${veiculo.preco}</td>
+                    <td>
+                        <button onclick="editarVeiculo(${veiculo.id})">Editar</button>
+                        <button onclick="detalharVeiculo(${veiculo.id})">Detalhes</button>
+                        <button onclick="excluirVeiculo(${veiculo.id})">Excluir</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Veículo não encontrado ou erro na busca.');
+            });
+    } else {
+        loadVeiculos();
+    }
+}
+
 function loadVeiculos() {
-    fetch('/GerenciadorDeVeiculos/api/veiculos') // URL para o backend
+    fetch('/GerenciadorDeVeiculos/api/veiculos')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erro ao carregar os veículos: ' + response.statusText);
@@ -101,7 +137,7 @@ function excluirVeiculo(id) {
 function salvarVeiculo(event) {
     event.preventDefault();
 
-    const veiculoId = document.getElementById('veiculoId').value; // Obtém o ID do veículo
+    const veiculoId = document.getElementById('veiculoId').value; 
     const modelo = document.getElementById('modelo').value;
     const fabricante = document.getElementById('fabricante').value;
     const ano = document.getElementById('ano').value;
