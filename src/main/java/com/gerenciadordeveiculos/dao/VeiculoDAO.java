@@ -18,6 +18,7 @@ import java.util.List;
  * @author Usuário
  */
 public class VeiculoDAO {
+
     private Connection connection;
 
     public VeiculoDAO(Connection connection) {
@@ -42,7 +43,7 @@ public class VeiculoDAO {
             }
         }
     }
-    
+
     public List<Veiculo> findAll() throws SQLException {
         List<Veiculo> veiculos = new ArrayList<>();
         String sql = "SELECT * FROM Veiculo";
@@ -82,6 +83,28 @@ public class VeiculoDAO {
             }
         }
         return null;
+    }
+
+    public List<Veiculo> findByModelo(String modelo) throws SQLException {
+        String sql = "SELECT * FROM Veiculo WHERE modelo LIKE ?";
+        List<Veiculo> veiculos = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + modelo + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Veiculo veiculo = new Veiculo(
+                        rs.getInt("id"),
+                        rs.getString("modelo"),
+                        rs.getString("fabricante"),
+                        rs.getInt("ano"),
+                        rs.getBigDecimal("preco")
+                );
+                veiculos.add(veiculo);
+            }
+        }
+        return veiculos;
     }
 
     public void delete(int id) throws SQLException {

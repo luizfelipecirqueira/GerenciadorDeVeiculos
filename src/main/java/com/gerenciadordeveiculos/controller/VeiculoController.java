@@ -40,44 +40,53 @@ public class VeiculoController extends HttpServlet {
      * Método para listar todos os veículos.
      */
     @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    response.setHeader("Access-Control-Allow-Origin", "*");
-    response.setContentType("application/json");
-    response.setCharacterEncoding("UTF-8");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-    // Verificar se há um id na URL
-    String idParam = request.getPathInfo();
-    if (idParam != null && idParam.startsWith("/")) {
-        idParam = idParam.substring(1);
-    }
+        String idParam = request.getPathInfo();
+        String modeloParam = request.getParameter("modelo");
 
-    if (idParam != null && !idParam.isEmpty()) {
-        try {
-            int id = Integer.parseInt(idParam);
-            Veiculo veiculo = veiculoService.getVeiculoById(id);
-            if (veiculo != null) {
-                String json = new Gson().toJson(veiculo);
-                response.getWriter().write(json);
-            } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                response.getWriter().write("{\"message\": \"Veículo não encontrado\"}");
-            }
-        } catch (NumberFormatException | SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"message\": \"Erro ao buscar o veículo\"}");
+        if (idParam != null && idParam.startsWith("/")) {
+            idParam = idParam.substring(1);
         }
-    } else {
-        // Caso contrário, retornar todos os veículos
+
         try {
-            List<Veiculo> veiculos = veiculoService.getAllVeiculos();
-            String json = new Gson().toJson(veiculos);
-            response.getWriter().write(json);
+            if (idParam != null && !idParam.isEmpty()) {
+                try {
+                    int id = Integer.parseInt(idParam);
+                    Veiculo veiculo = veiculoService.getVeiculoById(id);
+                    if (veiculo != null) {
+                        response.getWriter().write(new Gson().toJson(veiculo));
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        response.getWriter().write("{\"message\": \"Veículo não encontrado\"}");
+                    }
+                } catch (NumberFormatException e) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().write("{\"message\": \"ID inválido\"}");
+                }
+            }
+            else if (modeloParam != null && !modeloParam.isEmpty()) {
+                List<Veiculo> veiculos = veiculoService.getVeiculoByModelo(modeloParam);
+                if (veiculos != null && !veiculos.isEmpty()) {
+                    response.getWriter().write(new Gson().toJson(veiculos));
+                } else {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.getWriter().write("{\"message\": \"Nenhum veículo encontrado com o modelo especificado\"}");
+                }
+            }
+            else {
+                List<Veiculo> veiculos = veiculoService.getAllVeiculos();
+                response.getWriter().write(new Gson().toJson(veiculos));
+            }
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"message\": \"Erro ao buscar veículos\"}");
+            response.getWriter().write("{\"message\": \"Erro ao processar a requisição\"}");
+            e.printStackTrace();
         }
     }
-}
 
     /**
      * Método para excluir um veículo específico.

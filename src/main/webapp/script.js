@@ -1,37 +1,74 @@
-function filtrarPorId() {
-    const id = document.getElementById('filtrarId').value;
-    if (id) {
-        fetch(`/GerenciadorDeVeiculos/api/veiculos/${id}`)
+function filtrar() {
+    const valor = document.getElementById('filtrar').value.trim();
+
+    let url = '/GerenciadorDeVeiculos/api/veiculos';
+
+    if (valor) {
+        if (!isNaN(valor)) {
+            url = `/GerenciadorDeVeiculos/api/veiculos/${valor}`;
+        } else {
+            url = `/GerenciadorDeVeiculos/api/veiculos?modelo=${encodeURIComponent(valor)}`;
+        }
+
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Erro ao carregar o veículo');
                 }
                 return response.json();
             })
-            .then(veiculo => {
+            .then(veiculos => {
                 const tableBody = document.querySelector('#veiculoTable tbody');
-                tableBody.innerHTML = ''; // Limpa a tabela
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${veiculo.id}</td>
-                    <td>${veiculo.modelo}</td>
-                    <td>${veiculo.ano}</td>
-                    <td>${veiculo.preco}</td>
-                    <td>
-                        <button onclick="editarVeiculo(${veiculo.id})">Editar</button>
-                        <button onclick="detalharVeiculo(${veiculo.id})">Detalhes</button>
-                        <button onclick="excluirVeiculo(${veiculo.id})">Excluir</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
+                tableBody.innerHTML = '';
+
+                if (Array.isArray(veiculos) && veiculos.length > 0) {
+                    veiculos.forEach(veiculo => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${veiculo.id}</td>
+                            <td>${veiculo.modelo}</td>
+                            <td>${veiculo.ano}</td>
+                            <td>${veiculo.preco}</td>
+                            <td>
+                                <button onclick="editarVeiculo(${veiculo.id})">Editar</button>
+                                <button onclick="detalharVeiculo(${veiculo.id})">Detalhes</button>
+                                <button onclick="excluirVeiculo(${veiculo.id})">Excluir</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else if (veiculos && !Array.isArray(veiculos)) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${veiculos.id}</td>
+                        <td>${veiculos.modelo}</td>
+                        <td>${veiculos.ano}</td>
+                        <td>${veiculos.preco}</td>
+                        <td>
+                            <button onclick="editarVeiculo(${veiculos.id})">Editar</button>
+                            <button onclick="detalharVeiculo(${veiculos.id})">Detalhes</button>
+                            <button onclick="excluirVeiculo(${veiculos.id})">Excluir</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                } else {
+                    alert('Nenhum veículo encontrado.');
+                }
             })
             .catch(error => {
                 console.error(error);
-                alert('Veículo não encontrado ou erro na busca.');
+                alert('Erro ao buscar o veículo. Verifique os dados inseridos.');
             });
     } else {
         loadVeiculos();
     }
+}
+
+function limparFiltros() {
+    const campoBusca = document.getElementById('filtrar');
+    campoBusca.value = ''; 
+
+    loadVeiculos();
 }
 
 function loadVeiculos() {
@@ -137,7 +174,7 @@ function excluirVeiculo(id) {
 function salvarVeiculo(event) {
     event.preventDefault();
 
-    const veiculoId = document.getElementById('veiculoId').value; 
+    const veiculoId = document.getElementById('veiculoId').value;
     const modelo = document.getElementById('modelo').value;
     const fabricante = document.getElementById('fabricante').value;
     const ano = document.getElementById('ano').value;
@@ -207,6 +244,22 @@ function salvarVeiculo(event) {
 
 function cancelarFormulario() {
     document.getElementById('formulario').style.display = 'none';
+    const modelo = document.getElementById('modelo');
+    modelo.value = '';
+    const fabricante = document.getElementById('fabricante');
+    fabricante.value = '';
+    const ano = document.getElementById('ano');
+    ano.value = '';
+    const preco = document.getElementById('preco');
+    preco.value = '';
+    const tipoVeiculo = document.getElementById('tipoVeiculo');
+    tipoVeiculo.value = 'Selecione';
+    const quantidadePortas = document.getElementById('quantidadePortas');
+    quantidadePortas.value = '';
+    const tipoCombustivel = document.getElementById('tipoCombustivel');
+    tipoCombustivel.value = 'gasolina';
+    const cilindrada = document.getElementById('cilindrada');
+    cilindrada.value = '';
 }
 
 function mostrarFormulario() {
