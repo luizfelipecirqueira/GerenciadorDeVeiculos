@@ -4,6 +4,8 @@
  */
 package com.gerenciadordeveiculos.dao;
 
+import com.gerenciadordeveiculos.model.Carro;
+import com.gerenciadordeveiculos.model.Moto;
 import com.gerenciadordeveiculos.model.Veiculo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -105,6 +107,55 @@ public class VeiculoDAO {
             }
         }
         return veiculos;
+    }
+
+    public Veiculo findDetalhesDoVeiculo(int id) throws SQLException {
+        String sql = "SELECT "
+                + "v.id, v.modelo, v.fabricante, v.ano, v.preco, "
+                + "c.quantidade_portas, c.tipo_combustivel, m.cilindrada "
+                + "FROM Veiculo v "
+                + "LEFT JOIN Carro c ON v.id = c.id "
+                + "LEFT JOIN Moto m ON v.id = m.id "
+                + "WHERE v.id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                if (rs.getInt("quantidade_portas") != 0) {
+                    Carro carro = new Carro(
+                            rs.getInt("id"),
+                            rs.getString("modelo"),
+                            rs.getString("fabricante"),
+                            rs.getInt("ano"),
+                            rs.getBigDecimal("preco"),
+                            rs.getInt("quantidade_portas"),
+                            rs.getString("tipo_combustivel")
+                    );
+                    return carro;
+                }
+                else if (rs.getInt("cilindrada") != 0) {
+                    Moto moto = new Moto(
+                            rs.getInt("id"),
+                            rs.getString("modelo"),
+                            rs.getString("fabricante"),
+                            rs.getInt("ano"),
+                            rs.getBigDecimal("preco"),
+                            rs.getInt("cilindrada")
+                    );
+                    return moto;
+                }
+                Veiculo veiculo = new Veiculo(
+                        rs.getInt("id"),
+                        rs.getString("modelo"),
+                        rs.getString("fabricante"),
+                        rs.getInt("ano"),
+                        rs.getBigDecimal("preco")
+                );
+                return veiculo;
+            }
+        }
+        return null;
     }
 
     public void delete(int id) throws SQLException {

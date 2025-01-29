@@ -68,5 +68,13 @@ public class Veiculo implements Serializable {
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
     }
+
+    public void setCarro(Carro carro) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setMoto(Moto moto) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
 

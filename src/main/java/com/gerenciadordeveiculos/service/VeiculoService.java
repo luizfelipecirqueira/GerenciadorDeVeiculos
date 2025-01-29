@@ -45,4 +45,8 @@ public class VeiculoService {
     public void updateVeiculo(Veiculo veiculo) throws SQLException {
         veiculoDAO.update(veiculo);
     }
+    
+    public Veiculo getDetalhesDoVeiculo(int id) throws SQLException{
+        return veiculoDAO.findDetalhesDoVeiculo(id);
+    }
 }

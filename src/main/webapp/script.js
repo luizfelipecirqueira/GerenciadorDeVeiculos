@@ -145,7 +145,7 @@ function editarVeiculo(id) {
 function detalharVeiculo(id) {
     console.log('Detalhar veículo:', id);
 
-    window.location.href = `/detalhesVeiculo?id=${id}`;
+        window.location.href = `/GerenciadorDeVeiculos/api/veiculos/${id}?detalhes=true`;
 }
 
 function excluirVeiculo(id) {

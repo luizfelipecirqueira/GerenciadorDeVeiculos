@@ -47,6 +47,7 @@ public class VeiculoController extends HttpServlet {
 
         String idParam = request.getPathInfo();
         String modeloParam = request.getParameter("modelo");
+        String detalhesParam = request.getParameter("detalhes");
 
         if (idParam != null && idParam.startsWith("/")) {
             idParam = idParam.substring(1);
@@ -56,19 +57,30 @@ public class VeiculoController extends HttpServlet {
             if (idParam != null && !idParam.isEmpty()) {
                 try {
                     int id = Integer.parseInt(idParam);
-                    Veiculo veiculo = veiculoService.getVeiculoById(id);
-                    if (veiculo != null) {
-                        response.getWriter().write(new Gson().toJson(veiculo));
+
+                    if ("true".equals(detalhesParam)) {
+                        Veiculo veiculoDetalhado = veiculoService.getDetalhesDoVeiculo(id);
+                        if (veiculoDetalhado != null) {
+                            response.getWriter().write(new Gson().toJson(veiculoDetalhado));
+                        } else {
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                            response.getWriter().write("{\"message\": \"Detalhes do veículo não encontrados\"}");
+                        }
                     } else {
-                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        response.getWriter().write("{\"message\": \"Veículo não encontrado\"}");
+                        // Chama a busca simples
+                        Veiculo veiculo = veiculoService.getVeiculoById(id);
+                        if (veiculo != null) {
+                            response.getWriter().write(new Gson().toJson(veiculo));
+                        } else {
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                            response.getWriter().write("{\"message\": \"Veículo não encontrado\"}");
+                        }
                     }
                 } catch (NumberFormatException e) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     response.getWriter().write("{\"message\": \"ID inválido\"}");
                 }
-            }
-            else if (modeloParam != null && !modeloParam.isEmpty()) {
+            } else if (modeloParam != null && !modeloParam.isEmpty()) {
                 List<Veiculo> veiculos = veiculoService.getVeiculoByModelo(modeloParam);
                 if (veiculos != null && !veiculos.isEmpty()) {
                     response.getWriter().write(new Gson().toJson(veiculos));
@@ -76,8 +88,7 @@ public class VeiculoController extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     response.getWriter().write("{\"message\": \"Nenhum veículo encontrado com o modelo especificado\"}");
                 }
-            }
-            else {
+            } else {
                 List<Veiculo> veiculos = veiculoService.getAllVeiculos();
                 response.getWriter().write(new Gson().toJson(veiculos));
             }
