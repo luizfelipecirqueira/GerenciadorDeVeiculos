@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Veículo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Detalhes do Veículo</h2>
+        <div id="veiculo-detalhes">
+            <p>Carregando detalhes...</p>
+        </div>
+        <button class="back-button" onclick="voltar()">Voltar</button>
+    </div>
+
+    <script>
+        function obterParametroURL(nome) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(nome);
+        }
+
+        function carregarDetalhesVeiculo() {
+            const id = obterParametroURL('id');
+            if (!id) {
+                document.getElementById("veiculo-detalhes").innerHTML = "<p>ID do veículo não encontrado.</p>";
+                return;
+            }
+
+            fetch(`/GerenciadorDeVeiculos/api/veiculos/${id}?detalhes=true`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Erro ao buscar os detalhes do veículo");
+                    }
+                    return response.json();
+                })
+                .then(veiculo => {
+                    document.getElementById("veiculo-detalhes").innerHTML = `
+                        <p><strong>ID:</strong> ${veiculo.id}</p>
+                        <p><strong>Modelo:</strong> ${veiculo.modelo}</p>
+                        <p><strong>Fabricante:</strong> ${veiculo.fabricante}</p>
+                        <p><strong>Ano:</strong> ${veiculo.ano}</p>
+                        <p><strong>Preço:</strong> R$ ${veiculo.preco.toFixed(2)}</p>
+                        ${veiculo.quantidade_portas ? `<p><strong>Portas:</strong> ${veiculo.quantidade_portas}</p>` : ''}
+                        ${veiculo.tipo_combustivel ? `<p><strong>Combustível:</strong> ${veiculo.tipo_combustivel}</p>` : ''}
+                        ${veiculo.cilindrada ? `<p><strong>Cilindrada:</strong> ${veiculo.cilindrada} cc</p>` : ''}
+                    `;
+                })
+                .catch(error => {
+                    console.error("Erro:", error);
+                    document.getElementById("veiculo-detalhes").innerHTML = "<p>Erro ao carregar detalhes do veículo.</p>";
+                });
+        }
+
+        function voltar() {
+            window.history.back();
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarDetalhesVeiculo);
+    </script>
+
+</body>
+</html>
+
