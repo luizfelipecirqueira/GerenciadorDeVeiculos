@@ -16,7 +16,13 @@
                 <button onclick="mostrarFormulario()">Adicionar Veículo</button>
             </div>
             <div class="search-container">
-                <input type="text" id="filtrar" class="search-input" placeholder="Digite um Id ou um Modelo do veículo">
+                <select id="campoFiltro">
+                    <option value="id">ID</option>
+                    <option value="fabricante">Fabricante</option>
+                    <option value="modelo">Modelo</option>
+                    <option value="preco">Preço</option>
+                </select>
+                <input type="text" id="filtrar" class="search-input" placeholder="Preencha o campo de busca">
                 <button onclick="filtrar()">Buscar Veículo</button>
                 <button onclick="limparFiltros()">Limpar Filtro</button>
             </div>

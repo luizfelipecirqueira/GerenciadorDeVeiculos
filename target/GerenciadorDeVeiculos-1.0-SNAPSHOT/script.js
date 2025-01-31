@@ -1,68 +1,102 @@
 function filtrar() {
     const valor = document.getElementById('filtrar').value.trim();
+    const campoSelecionado = document.getElementById('campoFiltro').value;
 
     let url = '/GerenciadorDeVeiculos/api/veiculos';
 
     if (valor) {
-        if (!isNaN(valor)) {
-            url = `/GerenciadorDeVeiculos/api/veiculos/${valor}`;
-        } else {
-            url = `/GerenciadorDeVeiculos/api/veiculos?modelo=${encodeURIComponent(valor)}`;
+        switch (campoSelecionado) {
+            case 'id':
+                if (!isNaN(valor)) {
+                    url = `/GerenciadorDeVeiculos/api/veiculos/${valor}`;
+                } else {
+                    alert("ID deve ser um número.");
+                    return;
+                }
+                break;
+            case 'fabricante':
+                url = `/GerenciadorDeVeiculos/api/veiculos?fabricante=${encodeURIComponent(valor)}`;
+                break;
+            case 'modelo':
+                url = `/GerenciadorDeVeiculos/api/veiculos?modelo=${encodeURIComponent(valor)}`;
+                break;
+            case 'preco':
+                if (!isNaN(valor)) {
+                    url = `/GerenciadorDeVeiculos/api/veiculos?preco=${valor}`;
+                } else {
+                    alert("Preço deve ser um número.");
+                    return;
+                }
+                break;
+            default:
+                alert("Selecione um campo válido.");
+                return;
         }
 
         fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro ao carregar o veículo');
-                    }
-                    return response.json();
-                })
-                .then(veiculos => {
-                    const tableBody = document.querySelector('#veiculoTable tbody');
-                    tableBody.innerHTML = '';
-
-                    if (Array.isArray(veiculos) && veiculos.length > 0) {
-                        veiculos.forEach(veiculo => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                            <td>${veiculo.id}</td>
-                            <td>${veiculo.fabricante}</td>
-                            <td>${veiculo.modelo}</td>
-                            <td>${veiculo.ano}</td>
-                            <td>${veiculo.preco}</td>
-                            <td>
-                                <button onclick="editarVeiculo(${veiculo.id})">Editar</button>
-                                <button onclick="detalharVeiculo(${veiculo.id})">Detalhes</button>
-                                <button onclick="excluirVeiculo(${veiculo.id})">Excluir</button>
-                            </td>
-                        `;
-                            tableBody.appendChild(row);
-                        });
-                    } else if (veiculos && !Array.isArray(veiculos)) {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                        <td>${veiculos.id}</td>
-                        <td>${veiculos.fabricante}</td>
-                        <td>${veiculos.modelo}</td>
-                        <td>${veiculos.ano}</td>
-                        <td>${veiculos.preco}</td>
-                        <td>
-                            <button onclick="editarVeiculo(${veiculos.id})">Editar</button>
-                            <button onclick="detalharVeiculo(${veiculos.id})">Detalhes</button>
-                            <button onclick="excluirVeiculo(${veiculos.id})">Excluir</button>
-                        </td>
-                    `;
-                        tableBody.appendChild(row);
-                    } else {
-                        alert('Nenhum veículo encontrado.');
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    alert('Erro ao buscar o veículo. Verifique os dados inseridos.');
-                });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
+                }
+                return response.text();
+            })
+            .then(text => {
+                try {
+                    const veiculos = JSON.parse(text);
+                    atualizarTabela(veiculos);
+                } catch (error) {
+                    console.error("Erro ao converter resposta para JSON:", error);
+                    console.error("Resposta recebida:", text);
+                    alert("Erro ao processar a resposta do servidor.");
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Erro ao buscar o veículo. Verifique os dados inseridos.');
+            });
     } else {
         loadVeiculos();
+    }
+}
+
+function atualizarTabela(veiculos) {
+    const tableBody = document.querySelector('#veiculoTable tbody');
+    tableBody.innerHTML = '';
+
+    if (Array.isArray(veiculos) && veiculos.length > 0) {
+        veiculos.forEach(veiculo => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${veiculo.id}</td>
+                <td>${veiculo.fabricante}</td>
+                <td>${veiculo.modelo}</td>
+                <td>${veiculo.ano}</td>
+                <td>${veiculo.preco}</td>
+                <td>
+                    <button onclick="editarVeiculo(${veiculo.id})">Editar</button>
+                    <button onclick="detalharVeiculo(${veiculo.id})">Detalhes</button>
+                    <button onclick="excluirVeiculo(${veiculo.id})">Excluir</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } else if (veiculos && typeof veiculos === 'object') {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${veiculos.id}</td>
+            <td>${veiculos.fabricante}</td>
+            <td>${veiculos.modelo}</td>
+            <td>${veiculos.ano}</td>
+            <td>${veiculos.preco}</td>
+            <td>
+                <button onclick="editarVeiculo(${veiculos.id})">Editar</button>
+                <button onclick="detalharVeiculo(${veiculos.id})">Detalhes</button>
+                <button onclick="excluirVeiculo(${veiculos.id})">Excluir</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    } else {
+        alert('Nenhum veículo encontrado.');
     }
 }
 

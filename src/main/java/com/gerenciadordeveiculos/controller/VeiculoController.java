@@ -53,7 +53,6 @@ public class VeiculoController extends HttpServlet {
         if (idParam != null && idParam.startsWith("/")) {
             idParam = idParam.substring(1);
         }
-
         try {
             if (idParam != null && !idParam.isEmpty()) {
                 try {
@@ -93,10 +92,10 @@ public class VeiculoController extends HttpServlet {
                 List<Veiculo> veiculos = veiculoService.getVeiculoByFabricante(fabricanteParam);
                 if(veiculos != null && !veiculos.isEmpty()){
                     response.getWriter().write(new Gson().toJson(veiculos));
-                    response.getWriter().write("{\"message\": \"Nenhum veículo encontrado com o fabricante especificado\"}");
                 }
                 else{
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.getWriter().write("{\"message\": \"Nenhum veículo encontrado com o fabricante especificado\"}");
                 }
             }
             else {
