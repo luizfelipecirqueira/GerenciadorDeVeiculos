@@ -7,6 +7,7 @@ package com.gerenciadordeveiculos.dao;
 import com.gerenciadordeveiculos.model.Carro;
 import com.gerenciadordeveiculos.model.Moto;
 import com.gerenciadordeveiculos.model.Veiculo;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -71,6 +72,26 @@ public class VeiculoDAO {
         String sql = "SELECT * FROM Veiculo WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Veiculo veiculo = new Veiculo(
+                        rs.getInt("id"),
+                        rs.getString("modelo"),
+                        rs.getString("fabricante"),
+                        rs.getInt("ano"),
+                        rs.getBigDecimal("preco")
+                );
+                return veiculo;
+            }
+        }
+        return null;
+    }
+    
+    public Veiculo findByAno(int ano) throws SQLException {
+        String sql = "SELECT * FROM Veiculo WHERE ano = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, ano);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {

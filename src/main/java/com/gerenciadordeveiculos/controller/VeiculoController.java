@@ -46,6 +46,7 @@ public class VeiculoController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         String idParam = request.getPathInfo();
+        String anoParam = request.getParameter("ano");
         String modeloParam = request.getParameter("modelo");
         String fabricanteParam = request.getParameter("fabricante");
         String detalhesParam = request.getParameter("detalhes");
@@ -88,17 +89,26 @@ public class VeiculoController extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     response.getWriter().write("{\"message\": \"Nenhum veículo encontrado com o modelo especificado\"}");
                 }
-            } else if(fabricanteParam != null && !fabricanteParam.isEmpty()){
+            } else if (fabricanteParam != null && !fabricanteParam.isEmpty()) {
                 List<Veiculo> veiculos = veiculoService.getVeiculoByFabricante(fabricanteParam);
-                if(veiculos != null && !veiculos.isEmpty()){
+                if (veiculos != null && !veiculos.isEmpty()) {
                     response.getWriter().write(new Gson().toJson(veiculos));
-                }
-                else{
+                } else {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     response.getWriter().write("{\"message\": \"Nenhum veículo encontrado com o fabricante especificado\"}");
                 }
-            }
-            else {
+            } else if (anoParam != null && !anoParam.isEmpty()) {
+                int ano = Integer.parseInt(anoParam);
+                if (ano != 0) {
+                    Veiculo veiculo = veiculoService.getVeiculoByAno(ano);
+                    if (veiculo != null) {
+                        response.getWriter().write(new Gson().toJson(veiculo));
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        response.getWriter().write("{\"message\": \"Veículo não encontrado\"}");
+                    }
+                }
+            } else {
                 List<Veiculo> veiculos = veiculoService.getAllVeiculos();
                 response.getWriter().write(new Gson().toJson(veiculos));
             }

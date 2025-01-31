@@ -6,6 +6,7 @@ package com.gerenciadordeveiculos.service;
 
 import com.gerenciadordeveiculos.dao.VeiculoDAO;
 import com.gerenciadordeveiculos.model.Veiculo;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -32,6 +33,10 @@ public class VeiculoService {
 
     public Veiculo getVeiculoById(int id) throws SQLException {
         return veiculoDAO.findById(id);
+    }
+    
+    public Veiculo getVeiculoByAno(int ano) throws SQLException {
+        return veiculoDAO.findByAno(ano);
     }
 
     public List<Veiculo> getVeiculoByModelo(String modelo) throws SQLException {

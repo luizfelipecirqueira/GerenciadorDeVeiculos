@@ -20,11 +20,11 @@ function filtrar() {
             case 'modelo':
                 url = `/GerenciadorDeVeiculos/api/veiculos?modelo=${encodeURIComponent(valor)}`;
                 break;
-            case 'preco':
+            case 'ano':
                 if (!isNaN(valor)) {
-                    url = `/GerenciadorDeVeiculos/api/veiculos?preco=${valor}`;
+                    url = `/GerenciadorDeVeiculos/api/veiculos?ano=${valor}`;
                 } else {
-                    alert("Preço deve ser um número.");
+                    alert("Ano deve ser um número.");
                     return;
                 }
                 break;
