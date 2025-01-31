@@ -47,6 +47,7 @@ public class VeiculoController extends HttpServlet {
 
         String idParam = request.getPathInfo();
         String modeloParam = request.getParameter("modelo");
+        String fabricanteParam = request.getParameter("fabricante");
         String detalhesParam = request.getParameter("detalhes");
 
         if (idParam != null && idParam.startsWith("/")) {
@@ -88,7 +89,17 @@ public class VeiculoController extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     response.getWriter().write("{\"message\": \"Nenhum veículo encontrado com o modelo especificado\"}");
                 }
-            } else {
+            } else if(fabricanteParam != null && !fabricanteParam.isEmpty()){
+                List<Veiculo> veiculos = veiculoService.getVeiculoByFabricante(fabricanteParam);
+                if(veiculos != null && !veiculos.isEmpty()){
+                    response.getWriter().write(new Gson().toJson(veiculos));
+                    response.getWriter().write("{\"message\": \"Nenhum veículo encontrado com o fabricante especificado\"}");
+                }
+                else{
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            }
+            else {
                 List<Veiculo> veiculos = veiculoService.getAllVeiculos();
                 response.getWriter().write(new Gson().toJson(veiculos));
             }

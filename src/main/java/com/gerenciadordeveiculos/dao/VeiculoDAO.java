@@ -108,6 +108,28 @@ public class VeiculoDAO {
         }
         return veiculos;
     }
+    
+    public List<Veiculo> findByFabricante(String fabricante) throws SQLException {
+        String sql = "SELECT * FROM Veiculo WHERE fabricante LIKE ?";
+        List<Veiculo> veiculos = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + fabricante + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Veiculo veiculo = new Veiculo(
+                        rs.getInt("id"),
+                        rs.getString("modelo"),
+                        rs.getString("fabricante"),
+                        rs.getInt("ano"),
+                        rs.getBigDecimal("preco")
+                );
+                veiculos.add(veiculo);
+            }
+        }
+        return veiculos;
+    }
 
     public Veiculo findDetalhesDoVeiculo(int id) throws SQLException {
         String sql = "SELECT "

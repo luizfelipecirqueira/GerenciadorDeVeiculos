@@ -26,6 +26,7 @@ function filtrar() {
                             const row = document.createElement('tr');
                             row.innerHTML = `
                             <td>${veiculo.id}</td>
+                            <td>${veiculo.fabricante}</td>
                             <td>${veiculo.modelo}</td>
                             <td>${veiculo.ano}</td>
                             <td>${veiculo.preco}</td>
@@ -41,6 +42,7 @@ function filtrar() {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                         <td>${veiculos.id}</td>
+                        <td>${veiculos.fabricante}</td>
                         <td>${veiculos.modelo}</td>
                         <td>${veiculos.ano}</td>
                         <td>${veiculos.preco}</td>
@@ -86,6 +88,7 @@ function loadVeiculos() {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                     <td>${veiculo.id}</td>
+                    <td>${veiculo.fabricante}</td>
                     <td>${veiculo.modelo}</td>
                     <td>${veiculo.ano}</td>
                     <td>${veiculo.preco}</td>

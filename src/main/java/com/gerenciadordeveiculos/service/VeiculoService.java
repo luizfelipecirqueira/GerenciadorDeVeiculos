@@ -37,6 +37,10 @@ public class VeiculoService {
     public List<Veiculo> getVeiculoByModelo(String modelo) throws SQLException {
         return veiculoDAO.findByModelo(modelo);
     }
+    
+    public List<Veiculo> getVeiculoByFabricante(String fabricante) throws SQLException{
+        return veiculoDAO.findByFabricante(fabricante);
+    }
 
     public void deleteVeiculo(int id) throws SQLException {
         veiculoDAO.delete(id);
