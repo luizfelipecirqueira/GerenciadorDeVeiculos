@@ -133,8 +133,18 @@ button:hover {
     transition: border-color 0.3s ease-in-out;
 }
 
-.search-input:focus {
+.search-input:focus,
+.search-container select:focus
+{
     border-color: #007BFF;
 }
 
-
+.search-container select{
+    width: 200px;
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease-in-out;
+}
