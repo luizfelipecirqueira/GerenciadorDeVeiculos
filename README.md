@@ -7,6 +7,7 @@
 ## Tecnologias Utilizadas
 
 - **Java (Maven)**
+- **HTML, Css, Javascript**
 - **Apache Tomcat (usei a versão 9.0.98)**
 - **MySQL + MySQL Workbench (Download do SGBD versão 8.0.40 e Download do Mysql versão 8.0.40)**
 - **JDBC (Java Database Connectivity - versão mysql-connector-java-8.0.29)**
