@@ -19,6 +19,7 @@
 
 ### 
 **Instale o mysql e o Workbench**
+**Em geral, o banco vem com usuário padrão root. Você pode criar a sua senha assim como eu fiz com o meu no momento da instalação.**
 **Crie o banco de dados - no meu caso chamei de gerenciador de veículos**
 **Utilize o script abaixo, que já contêm as inserções necessárias**
 
